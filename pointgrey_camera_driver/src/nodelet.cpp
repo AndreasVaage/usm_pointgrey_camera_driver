@@ -104,6 +104,8 @@ private:
       wb_blue_ = config.white_balance_blue;
       wb_red_ = config.white_balance_red;
 
+      shutter_speed_ = config.shutter_speed;
+
       // Store CameraInfo binning information
       binning_x_ = 1;
       binning_y_ = 1;
@@ -479,9 +481,34 @@ private:
             wfov_camera_msgs::WFOVImagePtr wfov_image(new wfov_camera_msgs::WFOVImage);
             // Get the image from the camera library
             NODELET_DEBUG("Starting a new grab from camera.");
-            pg_.grabImage(wfov_image->image, frame_id_);
+            try {
+              pg_.grabImage(wfov_image->image, frame_id_);
+            } catch (CameraImageConsistencyError &e) {
+              NODELET_DEBUG("Skipping image due to: %s", e.what());
+              break;
+            }
+            ros::Time embeddedTime = wfov_image->image.header.stamp;
 
-            // Set other values
+            // Adjust for sync offset and set stamp to be in the middle of
+            // shutter period.
+            if ((embeddedTime.toSec() - 0.008 + 0.003 - shutter_speed_ / 2) +
+                    2 <
+                ros::Time::now().toSec()) {
+              NODELET_WARN(
+                  "Not realtime, latency of %f > 2 sec",
+                  (ros::Time::now().toSec() -
+                            (embeddedTime.toSec() - shutter_speed_ / 2)));
+              break;
+            }
+
+            ros::Time time = embeddedTime -
+                             ros::Duration(shutter_speed_ / 2 + 0.008 + 0.003);
+            if (ros::Time::now() - time > ros::Duration(2,0))
+            {
+              NODELET_WARN("Not realtime, latency of %f < - 2 sec",
+                           (ros::Time::now() - time).toSec());
+              break;
+            }
             wfov_image->header.frame_id = frame_id_;
 
             wfov_image->gain = gain_;
@@ -490,7 +517,7 @@ private:
 
             wfov_image->temperature = pg_.getCameraTemperature();
 
-            ros::Time time = ros::Time::now();
+            //ros::Time time = ros::Time::now();
             wfov_image->header.stamp = time;
             wfov_image->image.header.stamp = time;
 
@@ -583,6 +610,7 @@ private:
   double gain_;
   uint16_t wb_blue_;
   uint16_t wb_red_;
+  double shutter_speed_; ///< Camera shutter speed in seconds.
 
   // Parameters for cameraInfo
   size_t binning_x_; ///< Camera Info pixel binning along the image x axis.

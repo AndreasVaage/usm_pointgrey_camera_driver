@@ -150,7 +150,7 @@ bool PointGreyCamera::setNewConfiguration(pointgrey_camera_driver::PointGreyConf
       {
       bool temp = config.trigger_polarity;
       retVal &= PointGreyCamera::setExternalTrigger(config.enable_trigger, config.trigger_mode, config.trigger_source, config.trigger_parameter, config.trigger_delay, temp);
-      config.strobe1_polarity = temp;
+      config.trigger_polarity = temp;
       }
       break;
     default:
