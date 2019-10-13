@@ -10,20 +10,40 @@
   <arg name="right_camera_calibrated" default="0" />
 
   <arg name="packet_size" default="9000" />
-  <arg name="packet_delay" default="40000" />
+    <arg name="packet_delay" default="9000"/>
   <arg name="enable_trigger" default="true" />
   <arg name="trigger_mode" default="mode14" />
-  <arg name="trigger_polarity" default="0" />
+  <arg name="trigger_polarity" default="1" />
   <arg name="video_mode" default="format7_mode1" />
+    <arg name="format7_color_coding" default="raw8"/>
+    <arg name="auto_exposure" default="false"/>
+    <arg name="exposure" default="1.35"/>
+  <arg name="auto_shutter" default="false" />
+    <arg name="shutter_speed" default="0.01"/>
+    <arg name="auto_sharpness" default="false"/>
+    <arg name="sharpness" default="0.0"/>
+    <arg name="auto_gain" default="false"/>
+    <arg name="gain" default="15.0"/>
+    <arg name="auto_saturation" default="false"/>
+    <arg name="saturation" default="100.0"/>
+    <arg name="auto_white_balance" default="false"/>
+    <arg name="white_balance_blue" default="800"/>
+    <arg name="white_balance_red" default="550"/>
+  <arg name="enable_trigger_delay" default="false" />
+  <arg name="trigger_delay" default="0.0" />
+    <arg name="enable_strobe1" default="false"/>
+  <arg name="strobe1_polarity" default="0" />
+    <arg name="strobe1_delay" default="0.0"/>
+  <arg name="strobe1_duration" default="10" />
 
 
   <group ns="$(arg camera_name)" >
     <group ns="left" >
-      <node pkg="nodelet" type="nodelet" name="camera_nodelet_manager" args="manager" />
+        <node pkg="nodelet" type="nodelet" name="camera_nodelet_manager" output="screen" args="manager"/>
 
       <!-- Both cameras are not loaded into one nodelet manager to avoid the namespacing issue. -->
-      <node pkg="nodelet" type="nodelet" name="camera_nodelet"
-            args="load pointgrey_camera_driver/PointGreyCameraNodelet camera_nodelet_manager" >
+        <node pkg="nodelet" type="nodelet" name="camera_nodelet" output="screen"
+              args="load pointgrey_camera_driver/PointGreyCameraNodelet camera_nodelet_manager" >
         <param name="frame_id" value="camera_left" />
         <param name="serial" value="$(arg left_camera_serial)" />
         <param name="packet_size" value="$(arg packet_size)" />
@@ -32,6 +52,26 @@
         <param name="trigger_mode" value="$(arg trigger_mode)" />
         <param name="trigger_polarity" value="$(arg trigger_polarity)" />
         <param name="video_mode" value="$(arg video_mode)" />
+            <param name="format7_color_coding" value="$(arg format7_color_coding)"/>
+        <param name="auto_shutter" value="$(arg auto_shutter)" />
+        <param name="shutter_speed" value="$(arg shutter_speed)" />
+        <param name="enable_trigger_delay" value="$(arg enable_trigger_delay)" />
+        <param name="trigger_delay" value="$(arg trigger_delay)" />
+        <param name="enable_strobe1" value="$(arg enable_strobe1)" />
+        <param name="strobe1_polarity" value="$(arg strobe1_polarity)" />
+        <param name="strobe1_delay" value="$(arg strobe1_delay)" />
+        <param name="strobe1_duration" value="$(arg strobe1_duration)" />
+            <param name="auto_exposure" value="$(arg auto_exposure)"/>
+            <param name="exposure" value="$(arg exposure)"/>
+            <param name="auto_sharpness" value="$(arg auto_sharpness)"/>
+            <param name="sharpness" value="$(arg sharpness)"/>
+            <param name="auto_gain" value="$(arg auto_gain)"/>
+            <param name="gain" value="$(arg gain)"/>
+            <param name="auto_saturation" value="$(arg auto_saturation)"/>
+            <param name="saturation" value="$(arg saturation)"/>
+            <param name="auto_white_balance" value="$(arg auto_white_balance)"/>
+            <param name="white_balance_blue" value="$(arg white_balance_blue)"/>
+            <param name="white_balance_red" value="$(arg white_balance_red)"/>
 
         <!-- When unspecified, the driver will use the default framerate as given by the
              camera itself. Use this parameter to override that value for cameras capable of
@@ -49,9 +89,9 @@
     </group>
 
     <group ns="right" >
-      <node pkg="nodelet" type="nodelet" name="camera_nodelet_manager" args="manager" />
+        <node pkg="nodelet" type="nodelet" name="camera_nodelet_manager" output="screen" args="manager"/>
 
-      <node pkg="nodelet" type="nodelet" name="camera_nodelet"
+        <node pkg="nodelet" type="nodelet" name="camera_nodelet" output="screen"
             args="load pointgrey_camera_driver/PointGreyCameraNodelet camera_nodelet_manager" >
         <param name="frame_id" value="camera_right" />
         <param name="serial" value="$(arg right_camera_serial)" />
@@ -61,6 +101,26 @@
         <param name="trigger_mode" value="$(arg trigger_mode)" />
         <param name="trigger_polarity" value="$(arg trigger_polarity)" />
         <param name="video_mode" value="$(arg video_mode)" />
+            <param name="format7_color_coding" value="$(arg format7_color_coding)"/>
+        <param name="auto_shutter" value="$(arg auto_shutter)" />
+        <param name="shutter_speed" value="$(arg shutter_speed)" />
+        <param name="enable_trigger_delay" value="$(arg enable_trigger_delay)" />
+        <param name="trigger_delay" value="$(arg trigger_delay)" />
+        <param name="enable_strobe1" value="$(arg enable_strobe1)" />
+        <param name="strobe1_polarity" value="$(arg strobe1_polarity)" />
+        <param name="strobe1_delay" value="$(arg strobe1_delay)" />
+        <param name="strobe1_duration" value="$(arg strobe1_duration)" />
+            <param name="auto_exposure" value="$(arg auto_exposure)"/>
+            <param name="exposure" value="$(arg exposure)"/>
+            <param name="auto_sharpness" value="$(arg auto_sharpness)"/>
+            <param name="sharpness" value="$(arg sharpness)"/>
+            <param name="auto_gain" value="$(arg auto_gain)"/>
+            <param name="gain" value="$(arg gain)"/>
+            <param name="auto_saturation" value="$(arg auto_saturation)"/>
+            <param name="saturation" value="$(arg saturation)"/>
+            <param name="auto_white_balance" value="$(arg auto_white_balance)"/>
+            <param name="white_balance_blue" value="$(arg white_balance_blue)"/>
+            <param name="white_balance_red" value="$(arg white_balance_red)"/>
 
         <!-- When unspecified, the driver will use the default framerate as given by the
              camera itself. Use this parameter to override that value for cameras capable of
@@ -83,4 +143,6 @@
     </node>
 
   </group>
+
+
 </launch>
